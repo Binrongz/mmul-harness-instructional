@@ -75,40 +75,55 @@ int main(int argc, char** argv)
         {
 #endif
 
-           // allocate memory for 6 NxN matrics
-           std::vector<double> buf(6 * n * n);
-           double* A = buf.data() + 0;
-           double* B = A + n * n;
-           double* C = B + n * n;
-           double* Acopy = C + n * n;
-           double* Bcopy = Acopy + n * n;
-           double* Ccopy = Bcopy + n * n;
+          // allocate memory for 6 NxN matrics
+          std::vector<double> buf(6 * n * n);
+          double* A = buf.data() + 0;
+          double* B = A + n * n;
+          double* C = B + n * n;
+          double* Acopy = C + n * n;
+          double* Bcopy = Acopy + n * n;
+          double* Ccopy = Bcopy + n * n;
 
-           // load up matrics with some random numbers
-           fill(A, n * n);
-           fill(B, n * n);
-           fill(C, n * n);
+          // load up matrics with some random numbers
+          fill(A, n * n);
+          fill(B, n * n);
+          fill(C, n * n);
 
-           // make copies of A, B, C for use in verification of results
-           memcpy((void *)Acopy, (const void *)A, sizeof(double)*n*n);
-           memcpy((void *)Bcopy, (const void *)B, sizeof(double)*n*n);
-           memcpy((void *)Ccopy, (const void *)C, sizeof(double)*n*n);
+          // make copies of A, B, C for use in verification of results
+          memcpy((void *)Acopy, (const void *)A, sizeof(double)*n*n);
+          memcpy((void *)Bcopy, (const void *)B, sizeof(double)*n*n);
+          memcpy((void *)Ccopy, (const void *)C, sizeof(double)*n*n);
 
-           // insert timer code here
-
+// insert timer code here
+// ====== start counting ======
+auto start = std::chrono::high_resolution_clock::now();
+    
 #ifdef BLOCKED
-           square_dgemm_blocked(n, b, A, B, C); 
+          square_dgemm_blocked(n, b, A, B, C); 
 #else
-           square_dgemm(n, A, B, C); 
+          square_dgemm(n, A, B, C); 
 #endif
 
-           // insert timer code here
+auto end = std::chrono::high_resolution_clock::now();
+// ====== end counting ======
 
-           reference_dgemm(n, 1.0 , Acopy, Bcopy, Ccopy);
+// insert timer code here
+// Computation time
+std::chrono::duration<double> elapsed = end - start;
 
-           // compare your C with that computed by BLAS
-           if (check_accuracy(Ccopy, C, n*n) == false)
-              printf(" Error: your answer is not the same as that computed by BLAS. \n");
+#ifdef BLOCKED
+    std::cout << "N=" << n << " block=" << b 
+              << " time=" << elapsed.count() << " sec" << std::endl;
+#else
+    std::cout << "N=" << n 
+              << " time=" << elapsed.count() << " sec" << std::endl;
+#endif
+
+reference_dgemm(n, 1.0 , Acopy, Bcopy, Ccopy);
+
+// compare your C with that computed by BLAS
+if (check_accuracy(Ccopy, C, n*n) == false)
+    printf(" Error: your answer is not the same as that computed by BLAS. \n");
 
 #ifdef BLOCKED
         } // end loop over block sizes
