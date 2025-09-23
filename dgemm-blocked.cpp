@@ -6,19 +6,59 @@ const char* dgemm_desc = "Blocked dgemm.";
  * On exit, A and B maintain their input values. */
 void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C) 
 {
-   // Iterate over the block coordinates
+   // Allocating block buffers
+   double* blockA = new double[block_size * block_size];
+   double* blockB = new double[block_size * block_size];
+   double* blockC = new double[block_size * block_size];
+    
+   // Outer loop: Iterates over the block
    for (int i0 = 0; i0 < n; i0 += block_size) {
       for (int j0 = 0; j0 < n; j0 += block_size) {
-         for (int k0 = 0; k0 < n; k0 += block_size) {
-            // Do a triple loop inside a block
-            for (int i = i0; i < i0 + block_size; i++) {
-               for (int j = j0; j < j0 + block_size; j++) {
-                  for (int k = k0; k < k0 + block_size; k++) {
-                     C[i*n + j] += A[i*n + k] * B[k*n + j];
+            
+            // Copy C blocks to the buffer
+            for (int i = 0; i < block_size; i++) {
+                for (int j = 0; j < block_size; j++) {
+                    blockC[i * block_size + j] = C[(i0 + i) * n + (j0 + j)];
+                }
+            }
+            
+            for (int k0 = 0; k0 < n; k0 += block_size) {
+                
+               // Copy A blocks to the buffer
+               for (int i = 0; i < block_size; i++) {
+                  for (int k = 0; k < block_size; k++) {
+                     blockA[i * block_size + k] = A[(i0 + i) * n + (k0 + k)];
                   }
                }
+                
+               // Copy B blocks to the buffer
+               for (int k = 0; k < block_size; k++) {
+                  for (int j = 0; j < block_size; j++) {
+                     blockB[k * block_size + j] = B[(k0 + k) * n + (j0 + j)];
+                  }
+               }
+                
+               // Execute matrix multiplication on sub-blocks of the matrix
+               for (int i = 0; i < block_size; i++) {
+                  for (int j = 0; j < block_size; j++) {
+                     for (int k = 0; k < block_size; k++) {
+                        blockC[i * block_size + j] += blockA[i * block_size + k] * blockB[k * block_size + j];
+                     }
+                  }
+               }
+            }
+            
+            // Write the result back to the original matrix C
+            for (int i = 0; i < block_size; i++) {
+               for (int j = 0; j < block_size; j++) {
+                  C[(i0 + i) * n + (j0 + j)] = blockC[i * block_size + j];
             }
          }
       }
    }
+    
+   // Free buffer
+   delete[] blockA;
+   delete[] blockB;
+   delete[] blockC;
 }

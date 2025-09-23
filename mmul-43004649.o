@@ -1,0 +1,76 @@
+Description:	Basic implementation, three-loop dgemm.
+
+Working on problem size N=64 
+N=64 time=0.00 sec
+Working on problem size N=64 
+N=64 time=0.00 sec
+Working on problem size N=128 
+N=128 time=0.00 sec
+Working on problem size N=256 
+N=256 time=0.04 sec
+Working on problem size N=512 
+N=512 time=1.00 sec
+Working on problem size N=1024 
+N=1024 time=10.38 sec
+Working on problem size N=2048 
+N=2048 time=283.70 sec
+Description:	Blocked dgemm.
+
+Working on problem size N=64 
+Blocked DGEMM 
+N=64 block=2 time=0.00 sec
+N=64 block=16 time=0.00 sec
+N=64 block=32 time=0.00 sec
+N=64 block=64 time=0.00 sec
+Working on problem size N=64 
+Blocked DGEMM 
+N=64 block=2 time=0.00 sec
+N=64 block=16 time=0.00 sec
+N=64 block=32 time=0.00 sec
+N=64 block=64 time=0.00 sec
+Working on problem size N=128 
+Blocked DGEMM 
+N=128 block=2 time=0.00 sec
+N=128 block=16 time=0.00 sec
+N=128 block=32 time=0.00 sec
+N=128 block=64 time=0.00 sec
+Working on problem size N=256 
+Blocked DGEMM 
+N=256 block=2 time=0.02 sec
+N=256 block=16 time=0.01 sec
+N=256 block=32 time=0.03 sec
+N=256 block=64 time=0.03 sec
+Working on problem size N=512 
+Blocked DGEMM 
+N=512 block=2 time=0.26 sec
+N=512 block=16 time=0.26 sec
+N=512 block=32 time=0.44 sec
+N=512 block=64 time=0.48 sec
+Working on problem size N=1024 
+Blocked DGEMM 
+N=1024 block=2 time=2.34 sec
+N=1024 block=16 time=2.62 sec
+N=1024 block=32 time=3.92 sec
+N=1024 block=64 time=5.19 sec
+Working on problem size N=2048 
+Blocked DGEMM 
+N=2048 block=2 time=22.38 sec
+N=2048 block=16 time=37.14 sec
+N=2048 block=32 time=123.61 sec
+N=2048 block=64 time=228.16 sec
+Description:	Reference dgemm.
+
+Working on problem size N=64 
+N=64 time=0.00 sec
+Working on problem size N=64 
+N=64 time=0.00 sec
+Working on problem size N=128 
+N=128 time=0.00 sec
+Working on problem size N=256 
+N=256 time=0.00 sec
+Working on problem size N=512 
+N=512 time=0.01 sec
+Working on problem size N=1024 
+N=1024 time=0.04 sec
+Working on problem size N=2048 
+N=2048 time=0.33 sec
