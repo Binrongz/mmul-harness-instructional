@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(hw2 LANGUAGES C CXX)
+project(cp4 LANGUAGES C CXX)
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -15,13 +15,19 @@ if (NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
             "module swap ${Prg-${CMAKE_C_COMPILER_ID}} PrgEnv-gnu")
 endif ()
 
-# LIKWID support
-option(USE_LIKWID "Use LIKWID for performance monitoring" ON)
+# LIKWID support (optional)
+option(USE_LIKWID "Use LIKWID for performance monitoring" OFF)
 if(USE_LIKWID)
-    find_path(LIKWID_INCLUDE_DIR NAMES likwid.h PATHS ENV LIKWID_INCLUDE REQUIRED)
-    find_library(LIKWID_LIBRARY NAMES likwid PATHS ENV LIKWID_LIB REQUIRED)
-    add_compile_definitions(LIKWID_PERFMON)
-    include_directories(${LIKWID_INCLUDE_DIR})
+    find_path(LIKWID_INCLUDE_DIR NAMES likwid.h PATHS ENV LIKWID_INCLUDE)
+    find_library(LIKWID_LIBRARY NAMES likwid PATHS ENV LIKWID_LIB)
+    if(LIKWID_INCLUDE_DIR AND LIKWID_LIBRARY)
+        add_compile_definitions(LIKWID_PERFMON)
+        include_directories(${LIKWID_INCLUDE_DIR})
+        message(STATUS "Found LIKWID: ${LIKWID_LIBRARY}")
+    else()
+        message(WARNING "LIKWID not found, performance monitoring disabled")
+        set(USE_LIKWID OFF)
+    endif()
 endif()
 
 # Common library target for benchmarking.
