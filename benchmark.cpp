@@ -1,6 +1,6 @@
 //
 // (C) 2021, E. Wes Bethel
-// benchmark-* hardness for running different versions of matrix multiply
+// benchmark-* harness for running different versions of matrix multiply
 //    over different problem sizes
 //
 // usage: no command line arguments
@@ -17,6 +17,11 @@
 
 #include <cblas.h>
 #include <string.h>
+
+#ifdef LIKWID_PERFMON
+#include <likwid.h>
+#include <omp.h>
+#endif
 
 // external definitions for mmul's
 extern void square_dgemm(int, double*, double*, double*);
@@ -51,6 +56,14 @@ bool check_accuracy(double *A, double *Anot, int nvalues)
 /* The benchmarking program */
 int main(int argc, char** argv) 
 {
+#ifdef LIKWID_PERFMON
+    LIKWID_MARKER_INIT;
+    #pragma omp parallel
+    {
+        LIKWID_MARKER_THREADINIT;
+    }
+#endif
+
     std::cout << "Description:\t" << dgemm_desc << std::endl << std::endl;
 
     std::cout << std::fixed << std::setprecision(2);
@@ -75,7 +88,7 @@ int main(int argc, char** argv)
         {
 #endif
 
-          // allocate memory for 6 NxN matrics
+          // allocate memory for 6 NxN matrices
           std::vector<double> buf(6 * n * n);
           double* A = buf.data() + 0;
           double* B = A + n * n;
@@ -84,7 +97,7 @@ int main(int argc, char** argv)
           double* Bcopy = Acopy + n * n;
           double* Ccopy = Bcopy + n * n;
 
-          // load up matrics with some random numbers
+          // load up matrices with some random numbers
           fill(A, n * n);
           fill(B, n * n);
           fill(C, n * n);
@@ -130,6 +143,10 @@ if (check_accuracy(Ccopy, C, n*n) == false)
 #endif
 
     } // end loop over problem sizes
+
+#ifdef LIKWID_PERFMON
+    LIKWID_MARKER_CLOSE;
+#endif
 
     return 0;
 }

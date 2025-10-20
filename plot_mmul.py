@@ -87,7 +87,7 @@ def plot_results(data):
     plt.savefig("all_impl.png")
 
 def main():
-    data = parse_output("mmul-43006909.o")
+    data = parse_output("mmul-43010218.o")
     plot_results(data)
     print("✅ Image saved: basic_vs_blas.png, blocked_vs_blas.png, basic_vs_blocked.png, all_impl.png")
 
