@@ -1,0 +1,9 @@
+cat > .gitignore << 'EOF'
+.DS_Store
+*.o
+*.out
+build/
+results/
+*.tar.gz
+*.patch
+EOF

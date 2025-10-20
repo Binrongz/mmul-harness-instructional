@@ -70,3 +70,65 @@ a parameter from the main benchmark.cpp code. You should write your blocked matr
 with the block size parameterized in this fashion (rather than being a hard-coded thing). 
 
 #eof
+
+
+# CP4: OpenMP Matrix Multiply
+
+## Building on Perlmutter
+
+### Load Required Modules
+```bash
+module load PrgEnv-gnu
+module load cmake/3.24
+module load likwid
+```
+
+### Build
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
+This will generate three executables:
+- `benchmark-blas`
+- `benchmark-basic-omp`
+- `benchmark-blocked-omp`
+
+## Running
+
+### Test Configurations
+- Problem sizes: N = [128, 512, 2048]
+- Concurrency levels: t = [1, 4, 16, 64]
+- Block sizes (blocked version): B = [4, 16]
+
+### Quick Test Run
+```bash
+# Modify job scripts to use smaller problem sizes
+# Run individual tests
+sbatch job-cblas
+sbatch job-basic-omp
+sbatch job-blocked-omp
+```
+
+### Full Performance Run
+
+1. Edit `job-cblas`, `job-basic-omp`, `job-blocked-omp` to set:
+```bash
+   export PERF_COUNTER_GROUP=FLOPS_DP  # or L2CACHE, L3CACHE
+```
+
+2. Submit jobs:
+```bash
+   sbatch job-cblas
+   sbatch job-basic-omp
+   sbatch job-blocked-omp
+```
+
+3. Repeat for each performance counter group (FLOPS_DP, L2CACHE, L3CACHE)
+
+## Compiler Requirements
+- GCC (via PrgEnv-gnu module)
+- CMake 3.24 or later
+- LIKWID for performance counters
