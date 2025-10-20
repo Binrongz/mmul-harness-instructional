@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH -C cpu
+#SBATCH -q regular
+#SBATCH -t 00:30:00
+#SBATCH -A m4408
+#SBATCH --job-name=cp4-@BENCHMARK@
+
+# Load modules
+module load PrgEnv-gnu
+module load cmake/3.24
+
+# Performance counter group to collect
+export PERF_COUNTER_GROUP=FLOPS_DP
+
+# Problem sizes
+for N in 128 512 2048
+do
+    # Concurrency levels
+    for SLURM_NTASKS in 1 4 16 64
+    do
+        export OMP_NUM_THREADS=$SLURM_NTASKS
+        maxcore=$(($SLURM_NTASKS - 1))
+        
+        echo "Running @BENCHMARK@ with N=$N, threads=$SLURM_NTASKS"
+        srun -n 1 -c $SLURM_NTASKS ./benchmark-@BENCHMARK@ -N $N
+    done
+done
